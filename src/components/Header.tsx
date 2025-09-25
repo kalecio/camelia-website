@@ -4,22 +4,22 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import Image from "next/image";
 import ReactDOM from "react-dom";
 
 const navLinks = [
+  { href: "#features", label: "Funcionalidades" },
+  { href: "#pricing", label: "Preços" },
   { href: "#testimonials", label: "Depoimentos" },
-  { href: "#faq", label: "FAQ" },
+  { href: "#faq", label: "Perguntas Frequentes" },
 ];
 
-function MobileMenuPortal({ open, onClose, navLinks }: { open: boolean; onClose: () => void; navLinks: { href: string; label: string }[] }) {
+function MobileMenuPortal({ open, onClose, navLinks, darkMode, toggleDarkMode }: { open: boolean; onClose: () => void; navLinks: { href: string; label: string }[]; darkMode: boolean; toggleDarkMode: () => void }) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
   if (!mounted) return null;
   if (!open) return null;
-
-  console.log("navlinks", navLinks)
 
   return ReactDOM.createPortal(
     <>
@@ -46,9 +46,7 @@ function MobileMenuPortal({ open, onClose, navLinks }: { open: boolean; onClose:
       >
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
           <Link href="/" onClick={onClose} className="flex items-center gap-2">
-            <div className="rounded-md flex items-center justify-center text-white font-bold">
-                    <Image src="/images/flower.png" alt="Sabonete Camélia" width={70} height={70} className="object-cover" />
-               </div>
+            <div className="w-8 h-8 rounded-md bg-gradient-to-br bg-gradient-to-br from-primary to-background flex items-center justify-center text-white font-bold">C</div>
             <span className="font-semibold text-primary">Camélia Saboaria Artesanal</span>
           </Link>
 
@@ -64,6 +62,22 @@ function MobileMenuPortal({ open, onClose, navLinks }: { open: boolean; onClose:
             </Link>
           ))}
 
+          {/* Dark Mode Toggle in Mobile Menu */}
+          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+            <span className="text-lg text-primary font-medium">Modo Escuro</span>
+            <button
+              onClick={toggleDarkMode}
+              aria-label={darkMode ? "Desativar modo escuro" : "Ativar modo escuro"}
+              className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              <span
+                className={`${
+                  darkMode ? 'translate-x-6' : 'translate-x-1'
+                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+              />
+            </button>
+          </div>
+
           <div className="pt-4">
             <Link href="#get-started" onClick={onClose} className="w-full inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold bg-primary text-background shadow-sm hover:brightness-95 transition">
               Começar
@@ -78,7 +92,18 @@ function MobileMenuPortal({ open, onClose, navLinks }: { open: boolean; onClose:
 
 export default function Header() {
   const [open, setOpen] = React.useState(false);
+  const [darkMode, setDarkMode] = React.useState(false);
   const pathname = usePathname();
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    // Adiciona ou remove a classe dark do documento
+    if (!darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   // Close on escape
   React.useEffect(() => {
@@ -98,8 +123,24 @@ export default function Header() {
     }
   }, [open]);
 
+  // Verificar preferência do sistema ao carregar
+  React.useEffect(() => {
+    const isDark = localStorage.getItem('darkMode') === 'true' || 
+                  (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('darkMode'));
+    
+    setDarkMode(isDark);
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  // Salvar preferência
+  React.useEffect(() => {
+    localStorage.setItem('darkMode', darkMode.toString());
+  }, [darkMode]);
+
   return (
-    <header className="w-full bg-background/60 backdrop-blur sticky top-0 z-40 border-b border-gray-200 selection:bg-primary selection:text-background">
+    <header className="w-full bg-background/60 backdrop-blur sticky top-0 z-40 border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo (link to home). */}
@@ -107,14 +148,14 @@ export default function Header() {
             <Link href="/" aria-label="Início - Camélia Saboaria Artesanal" className="flex items-center gap-2">
               <span className="sr-only">Camélia Saboaria Artesanal — Início</span>
               <div className="rounded-md flex items-center justify-center text-white font-bold">
-                    <Image src="/images/flower.png" alt="Sabonete Camélia" width={70} height={70} className="object-cover" />
-               </div>
+                <Image src="/images/flower.png" alt="Sabonete Camélia" width={70} height={70} className="object-cover" />
+              </div>
               <span className="hidden sm:inline font-semibold">Camélia Saboaria Artesanal</span>
             </Link>
           </div>
 
           {/* Desktop nav */}
-          <nav aria-label="Primária" className="hidden md:flex md:items-center md:space-x-6">
+          <nav aria-label="Primária" className="hidden md:flex md:items-center md:space-x-4">
             <ul className="flex items-center space-x-6" role="menubar">
               {navLinks.map((link) => {
                 const isActive = pathname?.includes(link.href.replace("#", ""));
@@ -124,7 +165,7 @@ export default function Header() {
                       href={link.href}
                       role="menuitem"
                       aria-current={isActive ? "page" : undefined}
-                      className={`text-sm font-medium transition-colors ${isActive ? "brightness-95" : "hover:brightness-95"}`}
+                      className={`text-sm font-medium transition-colors ${isActive ? "text-indigo-600 dark:text-indigo-400" : "hover:text-indigo-600 dark:hover:text-indigo-400"}`}
                     >
                       {link.label}
                     </Link>
@@ -132,20 +173,30 @@ export default function Header() {
                 );
               })}
 
+              {/* Dark Mode Toggle - Desktop */}
               <li role="none">
-                <Link
-                  href="#get-started"
-                  role="menuitem"
-                  className="ml-2 inline-flex items-center rounded-md px-4 py-2 text-sm font-semibold bg-primary text-background selection:bg-background selection:text-primary shadow-sm hover:brightness-95 transition focus:outline-none click:outline-none"
+                <button
+                  onClick={toggleDarkMode}
+                  aria-label={darkMode ? "Desativar modo escuro" : "Ativar modo escuro"}
+                  className="p-2 rounded-md hover:bg-primary hover:text-background transition-colors focus:outline-none"
                 >
-                  Começar
-                </Link>
+                  {darkMode ? <Moon size={18} /> : <Sun size={18} />}
+                </button>
               </li>
             </ul>
           </nav>
 
           {/* Mobile controls */}
-          <div className="flex items-center md:hidden">
+          <div className="flex items-center md:hidden space-x-2">
+            {/* Dark Mode Toggle - Mobile (outside menu) */}
+            <button
+              onClick={toggleDarkMode}
+              aria-label={darkMode ? "Desativar modo escuro" : "Ativar modo escuro"}
+              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none"
+            >
+              {darkMode ? <Moon size={18} /> : <Sun size={18} />}
+            </button>
+
             <button
               aria-label={open ? "Fechar menu" : "Abrir menu"}
               aria-expanded={open}
@@ -159,7 +210,17 @@ export default function Header() {
       </div>
 
       {/* Portal-mounted mobile menu so it covers the whole viewport */}
-      <AnimatePresence>{open && <MobileMenuPortal open={open} onClose={() => setOpen(false)} navLinks={navLinks} />}</AnimatePresence>
+      <AnimatePresence>
+        {open && (
+          <MobileMenuPortal 
+            open={open} 
+            onClose={() => setOpen(false)} 
+            navLinks={navLinks}
+            darkMode={darkMode}
+            toggleDarkMode={toggleDarkMode}
+          />
+        )}
+      </AnimatePresence>
     </header>
   );
 }
