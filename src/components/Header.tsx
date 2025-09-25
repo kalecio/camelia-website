@@ -13,7 +13,7 @@ const navLinks = [
   { href: "#faq", label: "Perguntas Frequentes" },
 ];
 
-function MobileMenuPortal({ open, onClose, navLinks, darkMode, toggleDarkMode }: { open: boolean; onClose: () => void; navLinks: { href: string; label: string }[]; darkMode: boolean; toggleDarkMode: () => void }) {
+function MobileMenuPortal({ open, onClose, navLinks }: { open: boolean; onClose: () => void; navLinks: { href: string; label: string }[]; }) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
   if (!mounted) return null;
@@ -44,7 +44,9 @@ function MobileMenuPortal({ open, onClose, navLinks, darkMode, toggleDarkMode }:
       >
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
           <Link href="/" onClick={onClose} className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md bg-gradient-to-br bg-gradient-to-br from-primary to-background flex items-center justify-center text-white font-bold">C</div>
+            <div className="rounded-md flex items-center justify-center text-white font-bold">
+                <Image src="/images/flower.png" alt="Sabonete Camélia" width={70} height={70} className="object-cover" />
+            </div>
             <span className="font-semibold text-primary">Camélia Saboaria Artesanal</span>
           </Link>
 
@@ -198,8 +200,6 @@ export default function Header() {
             open={open} 
             onClose={() => setOpen(false)} 
             navLinks={navLinks}
-            darkMode={darkMode}
-            toggleDarkMode={toggleDarkMode}
           />
         )}
       </AnimatePresence>
