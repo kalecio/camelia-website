@@ -9,8 +9,6 @@ import Image from "next/image";
 import ReactDOM from "react-dom";
 
 const navLinks = [
-  { href: "#features", label: "Funcionalidades" },
-  { href: "#pricing", label: "Preços" },
   { href: "#testimonials", label: "Depoimentos" },
   { href: "#faq", label: "Perguntas Frequentes" },
 ];
@@ -61,22 +59,6 @@ function MobileMenuPortal({ open, onClose, navLinks, darkMode, toggleDarkMode }:
               {link.label}
             </Link>
           ))}
-
-          {/* Dark Mode Toggle in Mobile Menu */}
-          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-            <span className="text-lg text-primary font-medium">Modo Escuro</span>
-            <button
-              onClick={toggleDarkMode}
-              aria-label={darkMode ? "Desativar modo escuro" : "Ativar modo escuro"}
-              className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              <span
-                className={`${
-                  darkMode ? 'translate-x-6' : 'translate-x-1'
-                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
-              />
-            </button>
-          </div>
 
           <div className="pt-4">
             <Link href="#get-started" onClick={onClose} className="w-full inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold bg-primary text-background shadow-sm hover:brightness-95 transition">
