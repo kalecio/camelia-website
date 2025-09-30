@@ -27,16 +27,16 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-4xl sm:text-5xl font-semibold tracking-tight mb-4 selection:bg-primary selection:text-background"
           >
-            Uma forma simples de realçar <span className="block">sua beleza é com a rotina de skincare</span>
+            Seu banho merece o carinho e o aroma dos nossos sabonetes artesanais
           </motion.h1>
 
+          {/* Subtitle */}
           <p className="text-lg text-primary mb-6 selection:bg-primary selection:text-background">
-            Faça nosso questionário para descobrir qual fragrância combina mais com você. Sabonetes artesanais feitos com ingredientes naturais e amor.
           </p>
 
           <div className="flex items-center gap-4">
-            <a href="#get-started" className="inline-flex items-center rounded-md px-5 py-3 bg-primary text-background selection:bg-background selection:text-primary font-semibold shadow-md hover:brightness-95 transition">
-              Começar
+            <a href="https://wa.me/5581985626046" className="inline-flex items-center rounded-md px-5 py-3 bg-primary text-background selection:bg-background selection:text-primary font-semibold shadow-md hover:brightness-95 transition">
+              Catálogo
             </a>
 
             <a href="#about" className="text-sm text-primary hover:underline selection:bg-primary selection:text-background">Sobre o Produto</a>
@@ -53,7 +53,7 @@ export default function Home() {
           className="relative w-full max-w-[420px]"
         >
           <div className="rounded-2xl overflow-hidden shadow-xl bg-primary text-background selection:bg-background selection:text-primary">
-            <Image src="/images/soap.jpg" alt="Sabonete Camélia" width={760} height={760} className="object-cover" />
+            <Image src="/images/hero-image.png" alt="Sabonete Camélia" width={760} height={760} className="object-cover" />
           </div>
         </motion.div>
       </div>
@@ -73,15 +73,15 @@ export default function Home() {
           </a>
         </div>
 
-        <div className="lg:col-span-7 grid grid-cols-2 gap-4">
+        <div className="lg:col-span-7 flex flex-col md:grid md:grid-cols-2 gap-4">
           <div className="rounded-lg overflow-hidden">
-            <Image src="/images/soap.jpg" alt="Pastilhas de sabonete" width={700} height={700} className="object-cover w-full h-full" />
+            <Image src="/images/how-we-create.png" alt="Pastilhas de sabonete" width={700} height={700} className="object-cover w-full h-full" />
           </div>
 
           <div className="flex flex-col gap-4">
             <div className="rounded-lg overflow-hidden h-full bg-primary text-background selection:bg-background selection:text-primary border border-gray-100 p-4">
               <h4 className="font-medium mb-2">Origem sustentável</h4>
-              <p className="text-sm text-background">Fornecemos apenas os melhores ingredientes naturais de fazendas sustentáveis.</p>
+              <p className="text-sm text-background">Troque o químico pelo natural. Sabonetes sustentáveis que transformam seu banho em um ato de amor ao meio ambiente.</p>
             </div>
 
             <div className="rounded-lg overflow-hidden h-full bg-primary text-background selection:bg-background selection:text-primary border border-gray-100 p-4">
@@ -113,7 +113,7 @@ export default function Home() {
     </section>
 
     {/* TESTIMONIALS (minimal) */}
-    <section id="testimonials" className="py-16">
+    {/* <section id="testimonials" className="py-16">
       <div className="max-w-3xl mx-auto text-center">
         <h3 className="text-2xl font-semibold mb-4 selection:bg-primary selection:text-background">O Que Nossos Clientes Dizem</h3>
         <p className="text-primary mb-8 selection:bg-primary selection:text-background">Avaliações reais de nossos clientes que amam a Camélia Saboaria Artesanal.</p>
@@ -124,12 +124,12 @@ export default function Home() {
             <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200" />
             <div>
               <div className="font-medium">Leslie Alexander</div>
-              <div className="text-sm text-primary">Comprador Verificado</div>
+              <div className="text-sm text-background">Comprador Verificado</div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </section> */}
 
     {/* FAQ (accordion) */}
     <section id="faq" className="py-12">
@@ -137,13 +137,12 @@ export default function Home() {
         <h3 className="text-2xl font-semibold mb-6 selection:bg-primary selection:text-background">Perguntas frequentes</h3>
         <div className="space-y-3">
           {[
-            "Seus sabonetes são adequados para peles sensíveis?",
-            "Vocês oferecem envio internacional?",
-            "Quais ingredientes vocês usam?",
-          ].map((q, i) => (
-            <details key={q} className="bg-primary text-background selection:bg-background selection:text-primary p-4 rounded-lg border border-gray-100">
-              <summary className="cursor-pointer font-medium">{q}</summary>
-              <p className="mt-2 text-sm text-background">Sim — nossas receitas suaves são formuladas para serem adequadas para a maioria dos tipos de pele.</p>
+            { question: "Seus sabonetes são adequados para peles sensíveis?", answer: "Sim, para todos os tipos de peles, escolha o ideal para a sua." },
+            { question: "Vocês entregam para o Brasil inteiro?", answer: "Sim, contate-nos e consulte os valores de frete!" },
+          ].map(({question, answer}, i) => (
+            <details key={question} className="bg-primary text-background selection:bg-background selection:text-primary p-4 rounded-lg border border-gray-100">
+              <summary className="cursor-pointer font-medium">{question}</summary>
+              <p className="mt-2 text-sm text-background">{answer}</p>
             </details>
           ))}
         </div>
@@ -167,8 +166,7 @@ export default function Home() {
           <nav className="flex items-center gap-4">
             <a href="#" className="text-sm text-primary hover:underline">Início</a>
             <a href="#about" className="text-sm text-primary hover:underline">Sobre o Produto</a>
-            <a href="#ingredients" className="text-sm text-primary hover:underline">Ingredientes</a>
-            <a href="#contact" className="text-sm text-primary hover:underline">Contato</a>
+            <a href="https://bio.site/cameliasaboariarte" className="text-sm text-primary hover:underline">Contato</a>
           </nav>
         </div>
 
