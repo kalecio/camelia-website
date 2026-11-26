@@ -16,6 +16,17 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Navigation regression checks
+
+Run `npm ci`, then `npx playwright install chromium` once to install the test browser.
+Run `npm run test:e2e` to verify hash destinations, product information links,
+footer navigation, and shared catalog/contact actions on desktop and mobile.
+The tests start a local preview on port 3100 automatically and intercept WhatsApp
+navigation so no external contact occurs.
+
+The catalog URL shared by the hero, mobile menu, and footer is configured in
+`src/lib/contact.ts`.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

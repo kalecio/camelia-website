@@ -7,9 +7,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import Image from "next/image";
 import ReactDOM from "react-dom";
+import { CATALOG_URL } from "@/lib/contact";
 
 const navLinks = [
-  { href: "#testimonials", label: "Depoimentos" },
+  { href: "#about", label: "Sobre o Produto" },
   { href: "#faq", label: "Perguntas Frequentes" },
 ];
 
@@ -63,9 +64,9 @@ function MobileMenuPortal({ open, onClose, navLinks }: { open: boolean; onClose:
           ))}
 
           <div className="pt-4">
-            <Link href="#get-started" onClick={onClose} className="w-full inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold bg-primary text-background shadow-sm hover:brightness-95 transition">
-              Começar
-            </Link>
+            <a href={CATALOG_URL} onClick={onClose} className="w-full inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold bg-primary text-background shadow-sm hover:brightness-95 transition">
+              Catálogo
+            </a>
           </div>
         </div>
       </motion.aside>
