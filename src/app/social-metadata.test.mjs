@@ -37,3 +37,19 @@ test("invalid or local configured origins fall back to the public Pages origin",
   assert.equal(metadata.openGraph.images[0].url, "https://camelia-website.pages.dev/images/og-image.jpg");
   assert.equal(metadata.twitter.images[0], "https://camelia-website.pages.dev/images/og-image.jpg");
 });
+
+test("IPv6 loopback and all 127.0.0.0/8 IPv4 origins are rejected", () => {
+  for (const origin of [
+    "http://[::1]:3000",
+    "https://127.0.0.0",
+    "https://127.0.0.1",
+    "https://127.42.99.255",
+    "https://127.255.255.255",
+  ]) {
+    assert.equal(
+      getMetadataBase({ NEXT_PUBLIC_SITE_URL: origin }).origin,
+      "https://camelia-website.pages.dev",
+      `${origin} should be treated as loopback`,
+    );
+  }
+});

@@ -4,12 +4,16 @@ const SOCIAL_IMAGE_PATH = "/images/og-image.jpg";
 function isPublicHttpUrl(value) {
   try {
     const url = new URL(value);
+    const hostname = url.hostname.toLowerCase();
+    const isIpv4Loopback = /^127(?:\.\d{1,3}){3}$/.test(hostname);
+
     return (
       (url.protocol === "https:" || url.protocol === "http:") &&
       !url.username &&
       !url.password &&
-      !["localhost", "127.0.0.1", "::1"].includes(url.hostname) &&
-      !url.hostname.endsWith(".localhost")
+      !["localhost", "::1", "[::1]"].includes(hostname) &&
+      !isIpv4Loopback &&
+      !hostname.endsWith(".localhost")
     );
   } catch {
     return false;
