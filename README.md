@@ -1,47 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Camélia Saboaria Artesanal
 
-## Getting Started
+Next.js 15 site for Camélia Saboaria Artesanal.
 
-First, run the development server:
+## Local development
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Navigation regression checks
 
-Run `npm ci`, then `npx playwright install chromium` once to install the test browser.
-Run `npm run test:e2e` to verify hash destinations, product information links,
-footer navigation, and shared catalog/contact actions on desktop and mobile.
-The tests start a local preview on port 3100 automatically and intercept WhatsApp
-navigation so no external contact occurs.
-
-The catalog URL shared by the hero, mobile menu, and footer is configured in
+Run `npx playwright install chromium` once, then run `npm run test:e2e` to verify
+hash destinations, product information links, footer navigation, and shared
+catalog/contact actions on desktop and mobile. Tests use a local server on port
+3100 and intercept WhatsApp navigation. The catalog URL is configured in
 `src/lib/contact.ts`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Cloudflare deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The site deploys to **Cloudflare Workers** through the OpenNext Cloudflare
+adapter. Workers is the appropriate runtime for this Next.js App Router site:
+it supports server-rendered Next.js output and the built-in `next/image`
+optimizer, while Cloudflare Pages' static hosting would require changing image
+handling or exporting a static-only site.
+The Worker binds Cloudflare Images as `IMAGES` so Next.js image requests use
+Cloudflare's image optimization API; confirm Cloudflare Images is enabled on
+the account before production deployment.
 
-## Learn More
+Install dependencies, then run `npm run cf:build` to compile the Worker. Run
+`npm run cf:preview` to serve the built app locally in the Workers runtime, or
+`npm run cf:deploy` to publish the production Worker. Wrangler configuration is
+in `wrangler.jsonc`; OpenNext settings are in `open-next.config.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+GitHub Actions creates one `camelia-website-pr-<number>` Worker for every open
+pull request, posts its `workers.dev` URL on the PR, and deletes that preview
+Worker when the PR closes. Pushes to `main` deploy `camelia-website`. Configure
+these GitHub Actions repository secrets before enabling the workflows:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `CLOUDFLARE_API_TOKEN`: API token scoped to the target account with Account
+  Settings read and Workers Scripts edit permissions.
+- `CLOUDFLARE_ACCOUNT_ID`: the Cloudflare account ID that owns the Workers.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No DNS or custom-domain configuration is included. Verify the preview and
+production `workers.dev` deployment before changing DNS or removing the existing
+Vercel project; keep Vercel available as rollback until the cutover is confirmed.
