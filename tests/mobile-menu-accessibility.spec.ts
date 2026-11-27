@@ -48,6 +48,7 @@ for (const closeMethod of ["Escape", "backdrop"] as const) {
 test("menu controls expose a visible focus indicator", async ({ page }) => {
   const dialog = page.getByRole("dialog");
   const firstLink = dialog.getByRole("link").first();
+  await expect.poll(() => dialog.evaluate((element) => element === document.activeElement)).toBe(true);
   await page.keyboard.press("Tab");
   await expect.poll(() => firstLink.evaluate((element) => element === document.activeElement)).toBe(true);
   const focusStyles = await firstLink.evaluate((element) => {
