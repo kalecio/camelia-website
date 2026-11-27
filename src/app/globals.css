@@ -4,6 +4,15 @@
   --background: #58644e;
   --foreground: #171717;
   --font-color: #ede9d0;
+  --catalog-surface: #f7f5eb;
+  --catalog-text: #232820;
+  --catalog-border: #d8d2b9;
+  --catalog-available-surface: #d1fae5;
+  --catalog-available-text: #064e3b;
+  --catalog-unavailable-surface: #e5e7eb;
+  --catalog-unavailable-text: #1f2937;
+  --catalog-action-surface: #353b31;
+  --catalog-action-text: #f5f1e3;
 }
 
 @theme inline {
@@ -18,6 +27,40 @@
 .dark {
   --background: #353b31;
   --foreground: #ededed;
+  --catalog-surface: #1f261e;
+  --catalog-text: #f6f4e8;
+  --catalog-border: #4d5746;
+  --catalog-available-surface: #064e3b;
+  --catalog-available-text: #d1fae5;
+  --catalog-unavailable-surface: #374151;
+  --catalog-unavailable-text: #f3f4f6;
+  --catalog-action-surface: #ede9d0;
+  --catalog-action-text: #1f2937;
+}
+
+.catalog-surface {
+  background-color: var(--catalog-surface);
+  color: var(--catalog-text);
+}
+
+.catalog-border {
+  border-color: var(--catalog-border);
+}
+
+.catalog-status-available {
+  background-color: var(--catalog-available-surface);
+  color: var(--catalog-available-text);
+}
+
+.catalog-status-unavailable,
+.catalog-unavailable-action {
+  background-color: var(--catalog-unavailable-surface);
+  color: var(--catalog-unavailable-text);
+}
+
+.catalog-inquiry {
+  background-color: var(--catalog-action-surface);
+  color: var(--catalog-action-text);
 }
 
 body {
