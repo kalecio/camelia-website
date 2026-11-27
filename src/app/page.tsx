@@ -4,6 +4,8 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
+import ProductCatalog from "@/components/ProductCatalog";
+import { approvedProducts } from "@/data/products";
 
 export default function Home() {
   return (
@@ -35,7 +37,7 @@ export default function Home() {
           </p>
 
           <div className="flex items-center gap-4">
-            <a href="https://wa.me/5581985626046" className="inline-flex items-center rounded-md px-5 py-3 bg-primary text-background selection:bg-background selection:text-primary font-semibold shadow-md hover:brightness-95 transition">
+            <a href="#catalogo" className="inline-flex items-center rounded-md px-5 py-3 bg-primary text-background selection:bg-background selection:text-primary font-semibold shadow-md hover:brightness-95 transition">
               Catálogo
             </a>
 
@@ -58,6 +60,8 @@ export default function Home() {
         </motion.div>
       </div>
     </section>
+
+    <ProductCatalog products={approvedProducts} />
 
     {/* HOW WE CREATE - two column */}
     <section id="about" className="py-20">
@@ -139,7 +143,7 @@ export default function Home() {
           {[
             { question: "Seus sabonetes são adequados para peles sensíveis?", answer: "Sim, para todos os tipos de peles, escolha o ideal para a sua." },
             { question: "Vocês entregam para o Brasil inteiro?", answer: "Sim, contate-nos e consulte os valores de frete!" },
-          ].map(({question, answer}, i) => (
+          ].map(({question, answer}) => (
             <details key={question} className="bg-primary text-background selection:bg-background selection:text-primary p-4 rounded-lg border border-gray-100">
               <summary className="cursor-pointer font-medium">{question}</summary>
               <p className="mt-2 text-sm text-background">{answer}</p>
