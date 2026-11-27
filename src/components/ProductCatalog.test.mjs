@@ -56,6 +56,9 @@ test("renders an empty catalog state without an inquiry action", () => {
 
 test("renders every required product detail and a product-specific inquiry link", () => {
   const html = renderCatalog([fixtureProduct]);
+  assert.match(html, /catalog-surface catalog-border/);
+  assert.match(html, /catalog-status-available/);
+  assert.match(html, /catalog-inquiry/);
   assert.match(html, /test-fixture\.jpg/);
   assert.match(html, /alt="Sabonete de teste"/);
   assert.match(html, /R\$ 12,34/);
