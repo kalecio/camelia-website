@@ -14,9 +14,47 @@ const navLinks = [
 ];
 
 function MobileMenuPortal({ open, onClose, navLinks }: { open: boolean; onClose: () => void; navLinks: { href: string; label: string }[]; }) {
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
+  const [portalRoot, setPortalRoot] = React.useState<HTMLDivElement | null>(null);
+  const dialogRef = React.useRef<HTMLElement>(null);
+  React.useEffect(() => {
+    const root = document.createElement("div");
+    root.dataset.mobileMenuPortal = "";
+    document.body.appendChild(root);
+    setPortalRoot(root);
+    return () => root.remove();
+  }, []);
+  React.useEffect(() => {
+    if (!portalRoot || !open || !dialogRef.current) return;
+
+    const dialog = dialogRef.current;
+    dialog.focus();
+
+    function trapFocus(event: KeyboardEvent) {
+      if (event.key !== "Tab") return;
+      const items = Array.from(dialog.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )).filter((element) => !element.hidden && element.getAttribute("aria-hidden") !== "true");
+      if (items.length === 0) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog || !dialog.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+    dialog.addEventListener("keydown", trapFocus);
+    return () => {
+      dialog.removeEventListener("keydown", trapFocus);
+    };
+  }, [portalRoot, open]);
+  if (!portalRoot) return null;
   if (!open) return null;
 
   return ReactDOM.createPortal(
@@ -41,41 +79,45 @@ function MobileMenuPortal({ open, onClose, navLinks }: { open: boolean; onClose:
         className="fixed inset-y-0 right-0 z-50 w-80 max-w-full bg-background backdrop-blur-none bg-opacity-100 shadow-2xl border-l border-gray-200"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="mobile-menu-title"
+        tabIndex={-1}
+        ref={dialogRef}
       >
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
-          <Link href="/" onClick={onClose} className="flex items-center gap-2">
+            <Link href="/" onClick={onClose} className="flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-2 focus-visible:ring-primary">
             <div className="rounded-md flex items-center justify-center text-white font-bold">
                 <Image src="/images/flower.png" alt="Sabonete Camélia" width={70} height={70} className="object-cover" />
             </div>
-            <span className="font-semibold text-primary">Camélia Saboaria Artesanal</span>
+            <span id="mobile-menu-title" className="font-semibold text-primary">Menu de navegação</span>
           </Link>
 
-          <button aria-label="Fechar menu" onClick={onClose} className="p-2 rounded-md focus:outline-none click:outline-none">
+          <button aria-label="Fechar menu" onClick={onClose} className="p-2 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-2 focus-visible:ring-primary">
             <X size={18} />
           </button>
         </div>
 
         <div className="px-4 py-6 space-y-4">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} onClick={onClose} className="block text-lg text-primary font-medium hover:brightness-95 transition">
+            <Link key={link.href} href={link.href} onClick={onClose} className="block text-lg text-primary font-medium hover:brightness-95 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-2 focus-visible:ring-primary">
               {link.label}
             </Link>
           ))}
 
           <div className="pt-4">
-            <Link href="#get-started" onClick={onClose} className="w-full inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold bg-primary text-background shadow-sm hover:brightness-95 transition">
+            <Link href="#get-started" onClick={onClose} className="w-full inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold bg-primary text-background shadow-sm hover:brightness-95 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-2 focus-visible:ring-primary">
               Começar
             </Link>
           </div>
         </div>
       </motion.aside>
     </>,
-    document.body
+    portalRoot
   );
 }
 
 export default function Header() {
   const [open, setOpen] = React.useState(false);
+  const menuTriggerRef = React.useRef<HTMLButtonElement>(null);
   const [darkMode, setDarkMode] = React.useState(false);
   const pathname = usePathname();
 
@@ -105,6 +147,20 @@ export default function Header() {
     } else {
       document.body.style.overflow = "";
     }
+  }, [open]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const trigger = menuTriggerRef.current;
+    const dialog = document.querySelector<HTMLElement>("[data-mobile-menu-portal] [role='dialog']");
+    const previouslyInert = Array.from(document.body.children)
+      .filter((element) => !element.contains(dialog))
+      .map((element) => ({ element: element as HTMLElement, inert: (element as HTMLElement).inert }));
+    previouslyInert.forEach(({ element }) => { element.inert = true; });
+    return () => {
+      previouslyInert.forEach(({ element, inert }) => { element.inert = inert; });
+      trigger?.focus();
+    };
   }, [open]);
 
   // Verificar preferência do sistema ao carregar
@@ -149,7 +205,7 @@ export default function Header() {
                       href={link.href}
                       role="menuitem"
                       aria-current={isActive ? "page" : undefined}
-                      className={`text-sm font-medium transition-colors ${isActive ? "text-indigo-600 dark:text-indigo-400" : "hover:text-indigo-600 dark:hover:text-indigo-400"}`}
+                      className={`text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-2 focus-visible:ring-primary ${isActive ? "text-indigo-600 dark:text-indigo-400" : "hover:text-indigo-600 dark:hover:text-indigo-400"}`}
                     >
                       {link.label}
                     </Link>
@@ -162,7 +218,7 @@ export default function Header() {
                 <button
                   onClick={toggleDarkMode}
                   aria-label={darkMode ? "Desativar modo escuro" : "Ativar modo escuro"}
-                  className="p-2 rounded-md hover:bg-primary hover:text-background transition-colors focus:outline-none"
+                  className="p-2 rounded-md hover:bg-primary hover:text-background transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   {darkMode ? <Moon size={18} /> : <Sun size={18} />}
                 </button>
@@ -176,7 +232,7 @@ export default function Header() {
             <button
               onClick={toggleDarkMode}
               aria-label={darkMode ? "Desativar modo escuro" : "Ativar modo escuro"}
-              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none"
+              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-2 focus-visible:ring-primary"
             >
               {darkMode ? <Moon size={18} /> : <Sun size={18} />}
             </button>
@@ -184,8 +240,9 @@ export default function Header() {
             <button
               aria-label={open ? "Fechar menu" : "Abrir menu"}
               aria-expanded={open}
+              ref={menuTriggerRef}
               onClick={() => setOpen((s) => !s)}
-              className="inline-flex items-center justify-center p-2 rounded-md focus:outline-none click:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-2 focus-visible:ring-primary"
             >
               {open ? <X size={20} /> : <Menu size={20} />}
             </button>
