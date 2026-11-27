@@ -152,9 +152,8 @@ export default function Header() {
   React.useEffect(() => {
     if (!open) return;
     const trigger = menuTriggerRef.current;
-    const dialog = document.querySelector<HTMLElement>("[data-mobile-menu-portal] [role='dialog']");
     const previouslyInert = Array.from(document.body.children)
-      .filter((element) => !element.contains(dialog))
+      .filter((element) => !element.hasAttribute("data-mobile-menu-portal"))
       .map((element) => ({ element: element as HTMLElement, inert: (element as HTMLElement).inert }));
     previouslyInert.forEach(({ element }) => { element.inert = true; });
     return () => {
